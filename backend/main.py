@@ -20,7 +20,7 @@ app.add_middleware(
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'your_password', # ENTER YOUR REAL PASSWORD HERE
+    'password': '@PANKAJkarpe1', # ENTER YOUR REAL PASSWORD HERE
     'database': 'project'
 }
 
