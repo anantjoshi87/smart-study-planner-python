@@ -10,6 +10,21 @@ class PlanRequest(BaseModel):
     hours_per_day: float
     days: int
 
+def format_time(hours_float: float) -> str:
+    h = int(hours_float)
+    m = int(round((hours_float - h) * 60))
+    m = int(round(m / 10.0) * 10)
+    if m == 60:
+        h += 1
+        m = 0
+    if h == 0 and m == 0:
+        return "0 min"
+    if h == 0:
+        return f"{m} min"
+    if m == 0:
+        return f"{h} hr"
+    return f"{h} hr {m} min"
+
 def generate_schedule(schedule_req: PlanRequest) -> Dict[str, Any]:
     """
     Generates a structured study schedule using a GREEDY algorithm.
@@ -39,8 +54,9 @@ def generate_schedule(schedule_req: PlanRequest) -> Dict[str, Any]:
                 extra_time = proportion * remaining_time
                 allocations[sub.name] += extra_time
 
-    for name in allocations:
-        allocations[name] = round(allocations[name], 2)
+    formatted_allocations = {}
+    for name, hours in allocations.items():
+        formatted_allocations[name] = format_time(hours)
 
     return {
         "metadata": {
@@ -48,8 +64,8 @@ def generate_schedule(schedule_req: PlanRequest) -> Dict[str, Any]:
             "total_days": num_days,
             "subjects_count": len(subjects)
         },
-        "daily_allocation": allocations,
+        "daily_allocation": formatted_allocations,
         "total_course_allocation": {
-            name: round(hours * num_days, 2) for name, hours in allocations.items()
+            name: format_time(hours * num_days) for name, hours in allocations.items()
         }
     }

@@ -25,7 +25,8 @@ def create_plan(req: PlanRequest):
             "ai_plan": ai_plan
         }
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        # Provide a safe, user-friendly error instead of leaking stack traces
+        raise HTTPException(status_code=400, detail="We couldn't create your study plan. Please check your inputs and try again.")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

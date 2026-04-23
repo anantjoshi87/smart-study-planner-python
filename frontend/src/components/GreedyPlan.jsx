@@ -30,7 +30,7 @@ export default function GreedyPlan({ originalPlan }) {
                 <div key={subject} className="flex items-center justify-between bg-white rounded-lg p-3 border border-slate-100 shadow-sm">
                     <span className="font-medium text-slate-700">{subject}</span>
                     <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-semibold">
-                        {hours} hrs / day
+                        {hours}hrs / day
                     </span>
                 </div>
             ))}
