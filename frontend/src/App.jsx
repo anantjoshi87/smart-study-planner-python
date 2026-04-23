@@ -31,16 +31,6 @@ function App() {
     fetchHistory();
   }, []);
 
-  const fetchHistory = async () => {
-      try {
-          const res = await fetch("http://localhost:8000/history/1"); // Fetching for user_id 1
-          const data = await res.json();
-          setHistory(data);
-      } catch (err) {
-          console.error("Could not load history", err);
-      }
-  };
-
   // Load from local storage on mount
   useEffect(() => {
     const savedData = localStorage.getItem('studyPlannerData');
@@ -114,6 +104,8 @@ function App() {
 
       // Save to local storage
       console.log("Plan successfully persisted to MySQL. Session ID:", data.session_id);
+
+      fetchHistory();
       
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
