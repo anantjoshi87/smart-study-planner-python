@@ -66,7 +66,7 @@ function App() {
         days: parseInt(days, 10) || 1
       };
 
-      const res = await fetch("http://localhost:8000/generate-plan", {
+      const res = await fetch("https://smart-study-planner-python.onrender.com/generate-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
