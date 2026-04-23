@@ -15,6 +15,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "AI Smart Study Planner API is running."}
+
 @app.post("/generate-plan")
 def create_plan(req: PlanRequest):
     try:

@@ -4,6 +4,8 @@ import Header from './components/Header';
 import ConfigPanel from './components/ConfigPanel';
 import ResultsPanel from './components/ResultsPanel';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smart-study-planner-python.onrender.com';
+
 function App() {
   const [subjects, setSubjects] = useState([{ name: 'Math', priority: 5 }]);
   const [hoursPerDay, setHoursPerDay] = useState(6);
@@ -66,7 +68,7 @@ function App() {
         days: parseInt(days, 10) || 1
       };
 
-      const res = await fetch("http://localhost:8000/generate-plan", {
+      const res = await fetch(`${API_BASE_URL}/generate-plan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
