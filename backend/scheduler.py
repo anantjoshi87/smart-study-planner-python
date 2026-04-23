@@ -6,6 +6,7 @@ class Subject(BaseModel):
     priority: int = Field(..., ge=1, le=5)
 
 class PlanRequest(BaseModel):
+    user_id: int  # <--- ADD THIS LINE
     subjects: List[Subject]
     hours_per_day: float
     days: int
