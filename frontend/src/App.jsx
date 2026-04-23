@@ -17,6 +17,21 @@ function App() {
   const [history, setHistory] = useState([]);
 
   const fetchHistory = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/history/1"); 
+      const data = await res.json();
+      setHistory(data);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    }
+  };
+
+  // 3. ADD THIS EFFECT TO LOAD ON STARTUP
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
       try {
           const res = await fetch("http://localhost:8000/history/1"); // Fetching for user_id 1
           const data = await res.json();
