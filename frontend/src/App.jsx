@@ -14,6 +14,17 @@ function App() {
   
   const [originalPlan, setOriginalPlan] = useState(null);
   const [aiPlan, setAiPlan] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  const fetchHistory = async () => {
+      try {
+          const res = await fetch("http://localhost:8000/history/1"); // Fetching for user_id 1
+          const data = await res.json();
+          setHistory(data);
+      } catch (err) {
+          console.error("Could not load history", err);
+      }
+  };
 
   // Load from local storage on mount
   useEffect(() => {
@@ -61,6 +72,7 @@ function App() {
 
     try {
       const payload = {
+        user_id: 1,
         subjects: validSubjects,
         hours_per_day: parseFloat(hoursPerDay) || 1,
         days: parseInt(days, 10) || 1
@@ -86,10 +98,7 @@ function App() {
       setAiPlan(data.ai_plan);
 
       // Save to local storage
-      localStorage.setItem('studyPlannerData', JSON.stringify({
-        originalPlan: data.original_plan,
-        aiPlan: data.ai_plan
-      }));
+      console.log("Plan successfully persisted to MySQL. Session ID:", data.session_id);
       
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
