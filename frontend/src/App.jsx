@@ -4,7 +4,7 @@ import Header from './components/Header';
 import ConfigPanel from './components/ConfigPanel';
 import ResultsPanel from './components/ResultsPanel';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smart-study-planner-python.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 function App() {
   const [subjects, setSubjects] = useState([{ name: 'Math', priority: 5 }]);
@@ -13,6 +13,7 @@ function App() {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [saveStatus, setSaveStatus] = useState(null); // null | 'saving' | 'saved' | 'error'
   
   const [originalPlan, setOriginalPlan] = useState(null);
   const [aiPlan, setAiPlan] = useState(null);
@@ -59,6 +60,7 @@ function App() {
       return;
     }
     setError(null);
+    setSaveStatus(null);
     setLoading(true);
 
     try {
@@ -92,7 +94,29 @@ function App() {
         originalPlan: data.original_plan,
         aiPlan: data.ai_plan
       }));
-      
+
+      // Auto-save to Railway MySQL database
+      setSaveStatus('saving');
+      const subjectNames = validSubjects.map(s => s.name).join(', ');
+      const autoTitle = `Plan: ${subjectNames} — ${days} day(s)`;
+      try {
+        const saveRes = await fetch(`${API_BASE_URL}/save-plan`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: autoTitle,
+            subjects: validSubjects,
+            hours_per_day: parseFloat(hoursPerDay) || 1,
+            days: parseInt(days, 10) || 1,
+            original_plan: data.original_plan,
+            ai_plan: data.ai_plan,
+          })
+        });
+        setSaveStatus(saveRes.ok ? 'saved' : 'error');
+      } catch {
+        setSaveStatus('error');
+      }
+
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
@@ -111,6 +135,16 @@ function App() {
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <p>{error}</p>
           </div>
+        )}
+
+        {saveStatus === 'saving' && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-700 p-3 rounded-xl text-sm">⏳ Saving plan to database...</div>
+        )}
+        {saveStatus === 'saved' && (
+          <div className="bg-green-50 border border-green-200 text-green-700 p-3 rounded-xl text-sm">✅ Plan saved to database successfully!</div>
+        )}
+        {saveStatus === 'error' && (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 rounded-xl text-sm">⚠️ Plan generated but could not be saved to database.</div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

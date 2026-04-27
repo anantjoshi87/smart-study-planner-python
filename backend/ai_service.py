@@ -1,16 +1,17 @@
 import os
 import time
 import random
+from pathlib import Path
 from google import genai
 from google.genai import errors
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
-def call_gemini_with_retry(prompt: str, retries: int = 3):
+def call_gemini_with_retry(prompt: str, api_key: str, retries: int = 3):
     delay = 1.0
-    client = genai.Client()
+    client = genai.Client(api_key=api_key)
     
     for attempt in range(retries + 1):
         try:
@@ -72,4 +73,4 @@ Add breaks, prevent burnout, suggest study techniques.
 Use dashes (-) for bullets. NO asterisks, NO bold text. Keep it extremely short.
 """
 
-    return call_gemini_with_retry(prompt)
+    return call_gemini_with_retry(prompt, api_key)
