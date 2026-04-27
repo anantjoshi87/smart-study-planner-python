@@ -3,3 +3,6 @@ uvicorn
 pydantic
 google-genai
 python-dotenv
+sqlalchemy
+pymysql
+cryptography
