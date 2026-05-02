@@ -137,13 +137,15 @@ def get_history(user_id: int):
         sessions = cursor.fetchall()
 
         for session in sessions:
+            if session.get("raw_ai_json"):
+                try:
+                    session["raw_ai_json"] = json.loads(session["raw_ai_json"])
+                except:
+                    pass
+
+            # Fetch subjects for this session
             cursor.execute(
-                """
-                SELECT subject_name, priority_level
-                FROM session_subjects
-                WHERE session_id = %s
-                ORDER BY id ASC
-                """,
+                "SELECT subject_name, priority_level FROM session_subjects WHERE session_id = %s",
                 (session["id"],)
             )
             session["subjects"] = cursor.fetchall()
